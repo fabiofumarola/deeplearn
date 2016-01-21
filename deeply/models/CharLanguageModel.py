@@ -28,7 +28,8 @@ def save_shakespeare_model(model,
         "indices_char": indices_char
     }
 
-    json.dump(model_obj, model_path)
+    with open(model_path, 'w') as f:
+        json.dump(model_obj, f)
 
     print("saved model at", model_path)
 
@@ -36,6 +37,7 @@ def save_shakespeare_model(model,
 
 
 def load_model(model_path):
+    
     with open(model_path, 'r') as f:
         model_obj = json.load(f)
 
