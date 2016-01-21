@@ -15,7 +15,7 @@ shakespeare_base_directory = "shakespeare_lang_model"
 
 
 def save_shakespeare_model(model,
-                           text_window, slide, chars, char_indices, indices_char):
+                           text_window, slide, len_chars, char_indices, indices_char):
     model_path = os.path.join(shakespeare_base_directory, "shakespeare_model.json")
 
     model_obj = {
@@ -23,7 +23,7 @@ def save_shakespeare_model(model,
         "model": model.to_json(),
         "text_window": text_window,
         "slide": slide,
-        "chars": chars,
+        "len_chars": len_chars,
         "char_indices": char_indices,
         "indices_char": indices_char
     }
@@ -45,7 +45,7 @@ def load_model(model_path):
 
     model = model_from_json(model_obj.model)
 
-    return (model, model_obj.text_window, model_obj.slide, model_obj.chars,
+    return (model, model_obj.text_window, model_obj.slide, model_obj.len_chars,
             model_obj.char_indices, model_obj.indices_char)
 
 
@@ -128,7 +128,7 @@ def sample(a, temperature=1.0):
 
 
 def predict_shakespeare(model,
-                        text_window, slide, chars, char_indices, indices_char,
+                        text_window, slide, len_chars, char_indices, indices_char,
                         seed, length=1024, diversity=0.5):
     """
     :param seed: the base text used to start the generation
@@ -149,7 +149,7 @@ def predict_shakespeare(model,
     generated += sentence
 
     for i in range(length):
-        x = np.zeros((1, text_window, len(chars)))
+        x = np.zeros((1, text_window, len(len_chars)))
         for t, char in enumerate(sentence):
             x[0, t, char_indices[char]] = 1.
 
