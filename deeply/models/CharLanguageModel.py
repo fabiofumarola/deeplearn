@@ -48,7 +48,6 @@ def load_model(model_path):
     return (model, model_obj.text_window, model_obj.slide, model_obj.len_chars,
             model_obj.char_indices, model_obj.indices_char)
 
-
 def train_shakespeare(epochs):
 
     if not os.path.exists(shakespeare_base_directory):
