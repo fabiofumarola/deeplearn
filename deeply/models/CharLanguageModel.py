@@ -1,5 +1,5 @@
 from __future__ import print_function
-from keras.models import Sequential
+from keras.models import Sequential, slice_X
 from keras.layers.core import Dense, Activation, Dropout
 from keras.layers.recurrent import LSTM
 from keras.datasets.data_utils import get_file
@@ -78,6 +78,10 @@ def train_shakespeare(epochs):
             X[i, t, char_indices[char]] = 1
         y[i, char_indices[next_chars[i]]] = 1
 
+    split_at = len(X) - len(X) / 10
+    (X_train, X_val) = (slice_X(X, 0, split_at), slice_X(X, split_at))
+    (y_train, y_val) = (y[:split_at], y[split_at:])
+
     # build the model: 2 stacked LSTM
     print('Build model...')
     model = Sequential()
@@ -95,19 +99,19 @@ def train_shakespeare(epochs):
     save_shakespeare_model(model,
                            maxlen, step, len(chars), char_indices, indices_char)
 
-    early_stop = EarlyStopping(monitor='loss', patience=20, verbose=1, mode='auto')
+    early_stop = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode='auto')
 
     tensorboard_dir = os.path.join(shakespeare_base_directory, "tensorboard_log")
     tensorboard = TensorBoard(log_dir=tensorboard_dir, histogram_freq=0)
 
-    checkpoint_path = os.path.join(shakespeare_base_directory, "model_weights.{epoch:06d}-{loss:.4f}.hdf5")
+    checkpoint_path = os.path.join(shakespeare_base_directory, "model_weights.{epoch:06d}-{val_loss:.4f}.hdf5")
     checkpointer = ModelCheckpoint(filepath=checkpoint_path,
-                                   monitor='loss', verbose=1, save_best_only=False, mode='auto')
+                                   monitor='val_loss', verbose=1, save_best_only=False, mode='auto')
 
     for i in range(epochs):
         print('-' * 50)
         print('Epoch ', i)
-        model.fit(X, y, batch_size=128, nb_epoch=1, show_accuracy=True,
+        model.fit(X_val, y_val, batch_size=128, nb_epoch=1, show_accuracy=True,
                   callbacks=[checkpointer, early_stop, tensorboard])
         if i % 5 == 0:
             print()
