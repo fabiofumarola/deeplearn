@@ -94,7 +94,7 @@ def train_shakespeare(epochs):
     print(model.summary())
 
     save_shakespeare_model(model,
-                           maxlen, step, chars, char_indices, indices_char)
+                           maxlen, step, len(chars), char_indices, indices_char)
 
     early_stop = EarlyStopping(monitor='loss', patience=20, verbose=1, mode='auto')
 
