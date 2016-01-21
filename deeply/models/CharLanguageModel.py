@@ -37,7 +37,7 @@ def save_shakespeare_model(model,
 
 
 def load_model(model_path):
-    
+
     with open(model_path, 'r') as f:
         model_obj = json.load(f)
 
@@ -50,7 +50,8 @@ def load_model(model_path):
 
 
 def train_shakespeare(epochs):
-    if os.path.exists(shakespeare_base_directory):
+
+    if not os.path.exists(shakespeare_base_directory):
         os.makedirs(shakespeare_base_directory)
 
     path = get_file('shakespeare.txt', origin="http://cs.stanford.edu/people/karpathy/char-rnn/shakespeare_input.txt")
