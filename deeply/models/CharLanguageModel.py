@@ -85,9 +85,9 @@ def train_shakespeare(epochs):
     # build the model: 2 stacked LSTM
     print('Build model...')
     model = Sequential()
-    model.add(LSTM(512, return_sequences=True, input_shape=(maxlen, len(chars))))
+    model.add(LSTM(256, return_sequences=True, input_shape=(maxlen, len(chars))))
     model.add(Dropout(0.2))
-    model.add(LSTM(512, return_sequences=False))
+    model.add(LSTM(256, return_sequences=False))
     model.add(Dropout(0.2))
     model.add(Dense(len(chars)))
     model.add(Activation('softmax'))
@@ -104,7 +104,7 @@ def train_shakespeare(epochs):
     tensorboard_dir = os.path.join(shakespeare_base_directory, "tensorboard_log")
     tensorboard = TensorBoard(log_dir=tensorboard_dir, histogram_freq=0)
 
-    checkpoint_path = os.path.join(shakespeare_base_directory, "model_weights.{epoch:06d}-{val_loss:.4f}.hdf5")
+    checkpoint_path = os.path.join(shakespeare_base_directory, "model_weights.{epoch:03d}-{val_loss:.4f}.hdf5")
     checkpointer = ModelCheckpoint(filepath=checkpoint_path,
                                    monitor='val_loss', verbose=1, save_best_only=False, mode='auto')
 
