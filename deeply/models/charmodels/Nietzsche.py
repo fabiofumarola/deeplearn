@@ -119,7 +119,7 @@ def train(epochs):
             seed = text[start_index: start_index + maxlen]
             for diversity in [0.2, 0.5, 0.8, 1.0]:
                 info, generated_text = predict(model, maxlen, step, len(chars), char_indices, indices_char,
-                                         seed, 1024, diversity)
+                                         seed, 200, diversity)
                 print(info)
                 print(generated_text)
 
