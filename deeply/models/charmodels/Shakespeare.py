@@ -61,7 +61,7 @@ def train(epochs):
     char_indices = dict((c, i) for i, c in enumerate(chars))
     indices_char = dict((i, c) for i, c in enumerate(chars))
 
-    maxlen = 100
+    maxlen = 50
     step = 3
     sentences = []
     next_chars = []
@@ -85,9 +85,9 @@ def train(epochs):
     # build the model: 2 stacked LSTM
     print('Build model...')
     model = Sequential()
-    model.add(LSTM(256, return_sequences=True, input_shape=(maxlen, len(chars))))
+    model.add(LSTM(512, return_sequences=True, input_shape=(maxlen, len(chars))))
     model.add(Dropout(0.2))
-    model.add(LSTM(256, return_sequences=False))
+    model.add(LSTM(512, return_sequences=False))
     model.add(Dropout(0.2))
     model.add(Dense(len(chars)))
     model.add(Activation('softmax'))
