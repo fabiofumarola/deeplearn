@@ -78,7 +78,7 @@ def train_shakespeare(epochs):
             X[i, t, char_indices[char]] = 1
         y[i, char_indices[next_chars[i]]] = 1
 
-    split_at = len(X) - len(X) / 10
+    split_at = len(X) - len(X) / 20
     (X_train, X_val) = (slice_X(X, 0, split_at), slice_X(X, split_at))
     (y_train, y_val) = (y[:split_at], y[split_at:])
 
@@ -111,7 +111,7 @@ def train_shakespeare(epochs):
     for i in range(epochs):
         print('-' * 50)
         print('Epoch ', i)
-        model.fit(X_val, y_val, batch_size=128, nb_epoch=1, show_accuracy=True,
+        model.fit(X_train, y_train, batch_size=128, nb_epoch=1, show_accuracy=True,
                   validation_data=(X_val, y_val),
                   callbacks=[checkpointer, early_stop, tensorboard])
         if i % 5 == 0:
