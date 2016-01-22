@@ -11,15 +11,15 @@ import os.path
 import json
 from keras.models import model_from_json
 
-shakespeare_base_directory = "shakespeare_lang_model"
+base_directory = "shakespeare_lang_model"
 
 
-def save_shakespeare_model(model,
+def save_model(model,
                            text_window, slide, len_chars, char_indices, indices_char):
-    model_path = os.path.join(shakespeare_base_directory, "shakespeare_model.json")
+    model_path = os.path.join(base_directory, "shakespeare_model.json")
 
     model_obj = {
-        "name": shakespeare_base_directory,
+        "name": base_directory,
         "model": model.to_json(),
         "text_window": text_window,
         "slide": slide,
@@ -48,10 +48,10 @@ def load_model(model_path):
     return (model, model_obj.text_window, model_obj.slide, model_obj.len_chars,
             model_obj.char_indices, model_obj.indices_char)
 
-def train_shakespeare(epochs):
+def train(epochs):
 
-    if not os.path.exists(shakespeare_base_directory):
-        os.makedirs(shakespeare_base_directory)
+    if not os.path.exists(base_directory):
+        os.makedirs(base_directory)
 
     path = get_file('shakespeare.txt', origin="http://cs.stanford.edu/people/karpathy/char-rnn/shakespeare_input.txt")
     text = open(path).read().lower()
@@ -96,15 +96,15 @@ def train_shakespeare(epochs):
 
     print(model.summary())
 
-    save_shakespeare_model(model,
+    save_model(model,
                            maxlen, step, len(chars), char_indices, indices_char)
 
     early_stop = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode='auto')
 
-    tensorboard_dir = os.path.join(shakespeare_base_directory, "tensorboard_log")
+    tensorboard_dir = os.path.join(base_directory, "tensorboard_log")
     tensorboard = TensorBoard(log_dir=tensorboard_dir, histogram_freq=0)
 
-    checkpoint_path = os.path.join(shakespeare_base_directory, "model_weights.{epoch:03d}-{val_loss:.4f}.hdf5")
+    checkpoint_path = os.path.join(base_directory, "model_weights.{epoch:03d}-{val_loss:.4f}.hdf5")
     checkpointer = ModelCheckpoint(filepath=checkpoint_path,
                                    monitor='val_loss', verbose=1, save_best_only=False, mode='auto')
 
@@ -174,8 +174,8 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 1:
         print("start the training for shakespeare passing the number of epochs \n"
-              "python CharLanguageModel.py 200")
+              "python Shakespeare.py 200")
         exit(1)
 
     epochs = int(sys.argv[1])
-    train_shakespeare(epochs)
+    train(epochs)
