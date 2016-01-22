@@ -61,7 +61,7 @@ def train_shakespeare(epochs):
     char_indices = dict((c, i) for i, c in enumerate(chars))
     indices_char = dict((i, c) for i, c in enumerate(chars))
 
-    maxlen = 50
+    maxlen = 100
     step = 3
     sentences = []
     next_chars = []
@@ -112,6 +112,7 @@ def train_shakespeare(epochs):
         print('-' * 50)
         print('Epoch ', i)
         model.fit(X_val, y_val, batch_size=128, nb_epoch=1, show_accuracy=True,
+                  validation_data=(X_val, y_val),
                   callbacks=[checkpointer, early_stop, tensorboard])
         if i % 5 == 0:
             print()
