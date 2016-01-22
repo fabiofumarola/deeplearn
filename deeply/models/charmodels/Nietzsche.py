@@ -101,7 +101,7 @@ def train(epochs):
     early_stop = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode='auto')
 
     tensorboard_dir = os.path.join(base_directory, "tensorboard_log")
-    tensorboard = TensorBoard(log_dir=tensorboard_dir, histogram_freq=0)
+    #tensorboard = TensorBoard(log_dir=tensorboard_dir, histogram_freq=0)
 
     checkpoint_path = os.path.join(base_directory, "model_weights.{epoch:03d}-{val_loss:.4f}.hdf5")
     checkpointer = ModelCheckpoint(filepath=checkpoint_path,
@@ -112,7 +112,7 @@ def train(epochs):
         print('Epoch ', i)
         model.fit(X_train, y_train, batch_size=128, nb_epoch=1, show_accuracy=True,
                   validation_data=(X_val, y_val),
-                  callbacks=[checkpointer, early_stop, tensorboard])
+                  callbacks=[checkpointer, early_stop])
         if i % 5 == 0:
             print()
             seed = "however, who have"
