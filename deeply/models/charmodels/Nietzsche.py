@@ -55,12 +55,13 @@ def train(epochs):
     path = get_file('nietzsche.txt', origin="https://s3.amazonaws.com/text-datasets/nietzsche.txt")
     text = open(path).read().lower()
     print('corpus length:', len(text))
+
     chars = set(text)
     print('total chars:', len(chars))
     char_indices = dict((c, i) for i, c in enumerate(chars))
     indices_char = dict((i, c) for i, c in enumerate(chars))
 
-    maxlen = 50
+    maxlen = 20
     step = 3
     sentences = []
     next_chars = []
@@ -77,6 +78,7 @@ def train(epochs):
             X[i, t, char_indices[char]] = 1
         y[i, char_indices[next_chars[i]]] = 1
 
+    # use 5% as validation
     split_at = len(X) - len(X) / 20
     (X_train, X_val) = (slice_X(X, 0, split_at), slice_X(X, split_at))
     (y_train, y_val) = (y[:split_at], y[split_at:])
@@ -92,16 +94,14 @@ def train(epochs):
     model.add(Activation('softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
-
     print(model.summary())
 
-    save_model(model,
-               maxlen, step, len(chars), char_indices, indices_char)
+    save_model(model, maxlen, step, len(chars), char_indices, indices_char)
 
     early_stop = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode='auto')
 
     tensorboard_dir = os.path.join(base_directory, "tensorboard_log")
-    #tensorboard = TensorBoard(log_dir=tensorboard_dir, histogram_freq=0)
+    tensorboard = TensorBoard(log_dir=tensorboard_dir, histogram_freq=0)
 
     checkpoint_path = os.path.join(base_directory, "model_weights.{epoch:03d}-{val_loss:.4f}.hdf5")
     checkpointer = ModelCheckpoint(filepath=checkpoint_path,
@@ -112,14 +112,15 @@ def train(epochs):
         print('Epoch ', i)
         model.fit(X_train, y_train, batch_size=128, nb_epoch=1, show_accuracy=True,
                   validation_data=(X_val, y_val),
-                  callbacks=[checkpointer, early_stop])
+                  callbacks=[checkpointer, early_stop, tensorboard])
         if i % 5 == 0:
             print()
-            seed = "however, who have"
+            start_index = random.randint(0, len(text) - maxlen - 1)
+            seed = text[start_index: start_index + maxlen]
             for diversity in [0.2, 0.5, 0.8, 1.0]:
-                generated_text = predict_shakespeare(model,
-                                                     maxlen, step, chars, char_indices, indices_char,
-                                                     seed, 1024, diversity)
+                info, generated_text = predict(model, maxlen, step, len(chars), char_indices, indices_char,
+                                         seed, 1024, diversity)
+                print(info)
                 print(generated_text)
 
 
@@ -130,9 +131,8 @@ def sample(a, temperature=1.0):
     return np.argmax(np.random.multinomial(1, a, 1))
 
 
-def predict_shakespeare(model,
-                        text_window, slide, len_chars, char_indices, indices_char,
-                        seed, length=1024, diversity=0.5):
+def predict(model, maxlen, step, len_chars, char_indices, indices_char,
+            seed, length=1024, diversity=0.5):
     """
     :param seed: the base text used to start the generation
     :param length: the length of the generated text
@@ -152,7 +152,7 @@ def predict_shakespeare(model,
     generated += sentence
 
     for i in range(length):
-        x = np.zeros((1, text_window, len(len_chars)))
+        x = np.zeros((1, maxlen, len_chars))
         for t, char in enumerate(sentence):
             x[0, t, char_indices[char]] = 1.
 
