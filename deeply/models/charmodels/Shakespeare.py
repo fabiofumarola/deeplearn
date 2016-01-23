@@ -61,7 +61,7 @@ def train(epochs):
     char_indices = dict((c, i) for i, c in enumerate(chars))
     indices_char = dict((i, c) for i, c in enumerate(chars))
 
-    maxlen = 50
+    maxlen = 20
     step = 3
     sentences = []
     next_chars = []
@@ -120,7 +120,7 @@ def train(epochs):
             for diversity in [0.2, 0.5, 0.8, 1.0]:
                 generated_text = predict_shakespeare(model,
                                                      maxlen, step, chars, char_indices, indices_char,
-                                                     seed, 1024, diversity)
+                                                     seed, 300, diversity)
                 print(generated_text)
 
 
