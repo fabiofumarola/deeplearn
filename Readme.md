@@ -7,4 +7,4 @@ This repo provides examples and evaluation of deep learning libraries. In partic
 3. sklearn
 4. pretty tensor
 
-## [Environment Setup](Installation.md)
+- [Environment Setup](Installation.md)
