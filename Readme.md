@@ -73,6 +73,14 @@ conda install scipy pyyaml h5py
 pip install git+https://github.com/Theano/Theano.git
 ```
 
+
+To run algorithms using theano:
+
+1. setup [$CUDA_ROOT environment variable to equal the cuda root directory, as in CUDA_ROOT=/path/to/cuda/root](http://deeplearning.net/software/theano/install.html#using-the-gpu)
+
+2. prepend your script with `THEANO_FLAGS=mode=FAST_RUN,device=gpu1,floatX=float32 python ...`
+
+
 To install keras:
 
 ```bash
