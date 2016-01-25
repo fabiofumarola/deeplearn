@@ -111,7 +111,7 @@ model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 
 # In[ ]:
 
-model.summary()
+print(model.summary())
 
 
 # In[ ]:
@@ -160,7 +160,7 @@ if tensorboard:
 for i in range(0, iterations):
     print('-' * 50)
     print('Epoch ', i)
-    model.fit(X, y, batch_size=batch_size, nb_epoch=1, 
+    model.fit(X, y, batch_size=batch_size, nb_epoch=1,
               show_accuracy=True, validation_data=(X_val,y_val),
              callbacks=callbacks)
 
