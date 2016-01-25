@@ -95,10 +95,10 @@ for i, size in enumerate(layers):
         model.add(LSTM(size, return_sequences=True))
     else:
         model.add(LSTM(size, return_sequences=False))
-        
+
     if dropout > 0:
-        model.add(Dropout(dropout))   
-    
+        model.add(Dropout(dropout))
+
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 
@@ -160,10 +160,10 @@ if tensorboard:
 for i in range(0, iterations):
     print('-' * 50)
     print('Epoch ', i)
-    model.fit(X_val, y_val, batch_size=batch_size, nb_epoch=1, 
+    model.fit(X, y, batch_size=batch_size, nb_epoch=1, 
               show_accuracy=True, validation_data=(X_val,y_val),
              callbacks=callbacks)
-    
+
     start_index = random.randint(0, len(text) - maxlen - 1)
     for diversity in [0.2, 0.5, 1.0]:
         print()
@@ -190,10 +190,7 @@ for i in range(0, iterations):
             sys.stdout.write(next_char)
             sys.stdout.flush()
         print()
-    
+
 
 
 # In[ ]:
-
-
-
