@@ -37,6 +37,7 @@ layers = [256, 256, 256]
 dropout = 0.2
 iterations = 40
 batch_size = 1000
+save = False
 checkpoint_dir = "shakespeare"
 early_stop = 20
 tensorboard = False
@@ -115,36 +116,38 @@ model.summary()
 
 # In[ ]:
 
-print("Save the model...")
+if save:
+    print("Save the model...")
 
-if not os.path.exists(checkpoint_dir):
-    os.makedirs(checkpoint_dir)
+    if not os.path.exists(checkpoint_dir):
+        os.makedirs(checkpoint_dir)
 
-model_path = os.path.join(checkpoint_dir, "shakespeare_model.json")
-model_obj = {
-    "name": "shakespeare",
-    "model": model.to_json(),
-    "maxlen": maxlen,
-    "step": step,
-    "char_indices": char_indices,
-    "indices_char": indices_char
-}
-with open(model_path, 'w') as f:
-    json.dump(model_obj, f)
+    model_path = os.path.join(checkpoint_dir, "shakespeare_model.json")
+    model_obj = {
+        "name": "shakespeare",
+        "model": model.to_json(),
+        "maxlen": maxlen,
+        "step": step,
+        "char_indices": char_indices,
+        "indices_char": indices_char
+    }
+    with open(model_path, 'w') as f:
+        json.dump(model_obj, f)
 
 
 # In[ ]:
 
 callbacks = []
 
-# checkpointfile = os.path.join(checkpoint_dir, "model_weights.{epoch:03d}-{val_loss:.4f}.hdf5")
-# checkpointer = ModelCheckpoint(filepath=checkpointfile,
-#                               monitor='val_loss', verbose=1, save_best_only=False, mode='auto')
-# callbacks.append(checkpointer)
+if save:
+    checkpointfile = os.path.join(checkpoint_dir, "model_weights.{epoch:03d}-{val_loss:.4f}.hdf5")
+    checkpointer = ModelCheckpoint(filepath=checkpointfile,
+                              monitor='val_loss', verbose=1, save_best_only=False, mode='auto')
+    callbacks.append(checkpointer)
 
-# if early_stop > 0:
-#     early_stop = EarlyStopping(monitor='val_loss', patience=early_stop, verbose=1, mode='auto')
-#     callbacks.append(early_stop)
+if early_stop > 0:
+    early_stop = EarlyStopping(monitor='val_loss', patience=early_stop, verbose=1, mode='auto')
+    callbacks.append(early_stop)
 
 if tensorboard:
     print("Tensorboard log ...")
